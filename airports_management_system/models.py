@@ -67,7 +67,11 @@ class Airplane(models.Model):
 
 class Airport(models.Model):
     name = models.CharField(max_length=255)
-    closest_big_city = models.ForeignKey(City, on_delete=models.CASCADE)
+    closest_big_city = models.ForeignKey(
+        City,
+        on_delete=models.CASCADE,
+        related_name="airports"
+    )
 
 
 class Route(models.Model):
