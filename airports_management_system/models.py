@@ -97,3 +97,37 @@ class Route(models.Model):
         return (f"{self.source.closest_big_city.name} "
                 f"-> "
                 f"{self.destination.closest_big_city.name}")
+
+
+class Flight(models.Model):
+    route = models.ForeignKey(Route, on_delete=models.CASCADE)
+    airplane = models.ForeignKey(Airplane, on_delete=models.CASCADE)
+    departure_time = models.DateTimeField()
+    arrival_time = models.DateTimeField()
+
+    def clean(self):
+        if not (self.departure_time
+                and self.arrival_time
+                and self.departure_time <= self.arrival_time):
+            raise ValidationError(
+                "Departure time must be earlier than arrival time"
+            )
+
+    def save(
+            self,
+            *args,
+            force_insert=False,
+            force_update=False,
+            using=None,
+            update_fields=None
+    ):
+        self.full_clean()
+        return super(Flight, self).save(
+            force_insert, force_update, using, update_fields
+        )
+
+    def __str__(self):
+        return (f"{self.route.source.closest_big_city.name}"
+                f"({self.departure_time}) -> "
+                f"{self.route.destination.closest_big_city.name}"
+                f"({self.arrival_time})")
