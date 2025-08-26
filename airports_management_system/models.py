@@ -4,6 +4,9 @@ from django.db import models
 class CrewPosition(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
+    def __str__(self):
+        return self.name
+
 
 class Crew(models.Model):
     first_name = models.CharField(max_length=255)
@@ -18,6 +21,9 @@ class Crew(models.Model):
     class Meta:
         verbose_name = "crew member"
         verbose_name_plural = "crew"
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}: {self.position.name}"
 
 
 class AirplaneType(models.Model):
