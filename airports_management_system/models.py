@@ -1,6 +1,28 @@
 from django.db import models
 
 
+class Country(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
+    class Meta:
+        verbose_name_plural = "Countries"
+
+    def __str__(self):
+        return self.name
+
+
+class City(models.Model):
+    name = models.CharField(max_length=255)
+    country = models.ForeignKey(Country, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name_plural = "Cities"
+        unique_together = ("name", "country")
+
+    def __str__(self):
+        return f"{self.name} in {self.country.name}"
+
+
 class CrewPosition(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
@@ -43,4 +65,4 @@ class Airplane(models.Model):
 
 class Airport(models.Model):
     name = models.CharField(max_length=255)
-    closest_big_city = models.CharField(max_length=255)
+    closest_big_city = models.ForeignKey(City, on_delete=models.CASCADE)
