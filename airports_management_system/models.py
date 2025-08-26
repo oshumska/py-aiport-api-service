@@ -176,3 +176,21 @@ class Order(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+
+
+class Ticket(models.Model):
+    row = models.IntegerField()
+    seat = models.IntegerField()
+    flight = models.ForeignKey(
+        Flight,
+        on_delete=models.CASCADE,
+        related_name="tickets",
+    )
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE,
+        related_name="tickets",
+    )
+
+    class Meta:
+        unique_together = ("row", "seat", "flight")
