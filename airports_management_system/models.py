@@ -39,7 +39,8 @@ class Crew(models.Model):
         CrewPosition,
         on_delete=models.SET_NULL,
         null=True,
-        blank=True
+        blank=True,
+        related_name="crews",
     )
 
     class Meta:
