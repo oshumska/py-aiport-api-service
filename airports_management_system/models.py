@@ -134,6 +134,7 @@ class Flight(models.Model):
     )
     departure_time = models.DateTimeField()
     arrival_time = models.DateTimeField()
+    crew_members = models.ManyToManyField(Crew, blank=True)
 
     def clean(self):
         if not (self.departure_time
