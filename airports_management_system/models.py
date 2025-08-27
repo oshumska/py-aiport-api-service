@@ -51,6 +51,10 @@ class Crew(models.Model):
         verbose_name = "crew member"
         verbose_name_plural = "crew"
 
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
     def __str__(self):
         return f"{self.first_name} {self.last_name}: {self.position.name}"
 
