@@ -7,6 +7,7 @@ from airports_management_system.models import (
     Crew,
     AirplaneType,
     Airplane,
+    Airport,
 )
 
 
@@ -61,3 +62,23 @@ class AirplaneListSerializer(AirplaneSerializer):
         source="airplane_type.name",
         read_only=True
     )
+
+
+class AirportSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Airport
+        fields = ("id", "name", "closest_big_city")
+
+
+class AirportListSerializer(serializers.ModelSerializer):
+    closest_big_city = serializers.CharField(
+        source="closest_big_city.name"
+    )
+    country = serializers.CharField(
+        source="closest_big_city.country.name"
+    )
+
+    class Meta:
+        model = Airport
+        fields = ("id", "name", "closest_big_city", "country")
