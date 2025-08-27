@@ -36,7 +36,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "airports_management_system",
-    "user"
+    "user",
+    "rest_framework",
 ]
 
 AUTH_USER_MODEL = "user.User"
