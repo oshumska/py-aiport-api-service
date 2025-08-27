@@ -5,6 +5,8 @@ from airports_management_system.models import (
     City,
     CrewPosition,
     Crew,
+    AirplaneType,
+    Airplane,
 )
 
 
@@ -23,12 +25,14 @@ class CitySerializer(serializers.ModelSerializer):
 
 
 class CrewPositionSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = CrewPosition
         fields = ("id", "name")
 
 
 class CrewSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Crew
         fields = ("id", "first_name", "last_name", "position")
@@ -36,3 +40,24 @@ class CrewSerializer(serializers.ModelSerializer):
 
 class CrewListSerializer(CrewSerializer):
     position = CrewPositionSerializer(many=False, read_only=True)
+
+
+class AirplaneTypeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AirplaneType
+        fields = ("id", "name")
+
+
+class AirplaneSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Airplane
+        fields = ("id", "name", "rows", "seats_in_row", "airplane_type")
+
+
+class AirplaneListSerializer(AirplaneSerializer):
+    airplane_type = serializers.CharField(
+        source="airplane_type.name",
+        read_only=True
+    )
