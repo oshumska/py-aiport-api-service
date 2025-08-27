@@ -9,6 +9,7 @@ from airports_management_system.models import (
     Airplane,
     Airport,
     Route,
+    Flight,
 )
 
 
@@ -95,3 +96,21 @@ class RouteSerializer(serializers.ModelSerializer):
 class RouteListSerializer(RouteSerializer):
     source = AirportListSerializer(many=False, read_only=True)
     destination = AirportListSerializer(many=False, read_only=True)
+
+
+class FlightSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Flight
+        fields = (
+            "id",
+            "route",
+            "airplane",
+            "departure_time",
+            "arrival_time",
+            "crew_members",
+        )
+
+
+class FlightListSerializer(FlightSerializer):
+    route = RouteListSerializer(many=False, read_only=True)
