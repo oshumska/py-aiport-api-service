@@ -73,6 +73,10 @@ class Airplane(models.Model):
         related_name="airplanes",
     )
 
+    @property
+    def capacity(self):
+        return self.rows * self.seats_in_row
+
 
 class Airport(models.Model):
     name = models.CharField(max_length=255)
