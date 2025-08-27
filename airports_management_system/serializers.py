@@ -1,5 +1,6 @@
 from django.db import transaction
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from airports_management_system.models import (
     Country,
@@ -151,6 +152,17 @@ class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
         fields = ("id", "row", "seat", "flight")
+
+    def validate(self, attrs):
+        data = super(TicketSerializer, self).validate(attrs=attrs)
+        Ticket.validate_ticket(
+            attrs["seat"],
+            attrs["row"],
+            attrs["flight"].airplane,
+            ValidationError
+        )
+
+        return data
 
 
 class OrderSerializer(serializers.ModelSerializer):
