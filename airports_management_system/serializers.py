@@ -45,6 +45,17 @@ class CrewListSerializer(CrewSerializer):
     position = CrewPositionSerializer(many=False, read_only=True)
 
 
+class CrewDetailSerializer(serializers.ModelSerializer):
+    position = serializers.CharField(
+        source="position.name",
+        read_only=True
+    )
+
+    class Meta:
+        model = Crew
+        fields = ("full_name", "position",)
+
+
 class AirplaneTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
