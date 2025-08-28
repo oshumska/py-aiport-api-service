@@ -26,7 +26,7 @@ class City(models.Model):
         unique_together = ("name", "country")
 
     def __str__(self):
-        return f"{self.name} in {self.country.name}"
+        return f"{self.name}({self.country.name})"
 
 
 class CrewPosition(models.Model):
