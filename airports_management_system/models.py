@@ -66,6 +66,9 @@ class AirplaneType(models.Model):
         verbose_name = "airplane type"
         verbose_name_plural = "airplane types"
 
+    def __str__(self):
+        return self.name
+
 
 class Airplane(models.Model):
     name = models.CharField(max_length=255)
