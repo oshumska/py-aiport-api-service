@@ -94,7 +94,7 @@ class AirportViewSet(
     mixins.CreateModelMixin,
     viewsets.GenericViewSet
 ):
-    queryset = Airport.objects.select_related("closest_big_city")
+    queryset = Airport.objects.select_related("closest_big_city__country")
     serializer_class = AirportSerializer
 
     def get_serializer_class(self):
