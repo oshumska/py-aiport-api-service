@@ -21,7 +21,7 @@ from debug_toolbar.toolbar import debug_toolbar_urls
 urlpatterns = [
         path("admin/", admin.site.urls),
         path(
-                "api/airports_manager",
+                "api/airports_manager/",
                 include(
                         "airports_management_system.urls",
                         namespace="airports-manager"
