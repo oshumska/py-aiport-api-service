@@ -80,6 +80,7 @@ class AirplaneListSerializer(AirplaneSerializer):
 
 
 class AirportSerializer(serializers.ModelSerializer):
+    closest_big_city = serializers.PrimaryKeyRelatedField(many=False, queryset=City.objects.select_related("country"))
 
     class Meta:
         model = Airport
