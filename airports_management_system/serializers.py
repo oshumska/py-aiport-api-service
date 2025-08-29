@@ -138,6 +138,21 @@ class RouteListSerializer(RouteSerializer):
 
 
 class FlightSerializer(serializers.ModelSerializer):
+    route = serializers.PrimaryKeyRelatedField(
+        many=False,
+        queryset=Route.objects.select_related(
+            "destination__closest_big_city__country",
+            "source__closest_big_city__country"
+        )
+    )
+    airplane = serializers.PrimaryKeyRelatedField(
+        many=False,
+        queryset=Airplane.objects.select_related("airplane_type")
+    )
+    crew_members = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=Crew.objects.select_related("position")
+    )
 
     def validate(self, attrs):
         data = super(FlightSerializer, self).validate(attrs=attrs)
