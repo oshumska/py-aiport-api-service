@@ -191,6 +191,34 @@ class RouteViewSet(
 
         return RouteSerializer
 
+    def get_queryset(self):
+        source_str_id = self.request.query_params.get("source")
+        destination_str_id = self.request.query_params.get("destination")
+        to_country_str_id = self.request.query_params.get("to_country")
+        from_country_str_id = self.request.query_params.get("from_country")
+
+        queryset = self.queryset
+
+        if source_str_id:
+            queryset = queryset.filter(source=int(source_str_id))
+
+        if destination_str_id:
+            queryset = queryset.filter(destination=int(destination_str_id))
+
+        if to_country_str_id:
+            to_country = int(to_country_str_id)
+            queryset = queryset.filter(
+                destination__closest_big_city__country=to_country
+            )
+
+        if from_country_str_id:
+            from_country = int(from_country_str_id)
+            queryset = queryset.filter(
+                source__closest_big_city__country=from_country
+            )
+
+        return queryset
+
 
 class FlightViewSet(viewsets.ModelViewSet):
     queryset = (
