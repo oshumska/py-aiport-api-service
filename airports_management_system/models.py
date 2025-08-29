@@ -118,10 +118,10 @@ class Route(models.Model):
 
     @staticmethod
     def validate_route(source, destination, distance, error_to_raise):
+        if distance <= 0:
+            raise error_to_raise("Distance must be positive")
         if source == destination:
             raise error_to_raise("Source and destination must be different")
-        if distance == 0:
-            error_to_raise("Distance cannot be 0")
 
     def clean(self):
         Route.validate_route(
