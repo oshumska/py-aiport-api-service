@@ -27,4 +27,5 @@ urlpatterns = [
                         namespace="airports-manager"
                 )
         ),
+        path("api/user/", include("user.urls", namespace="user")),
 ] + debug_toolbar_urls()
