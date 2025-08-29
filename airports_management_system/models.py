@@ -93,6 +93,10 @@ class Airport(models.Model):
         related_name="airports"
     )
 
+    def __str__(self):
+        country = self.closest_big_city.country.name
+        return f"{self.name} ({self.closest_big_city.name}, {country})"
+
 
 class Route(models.Model):
     source = models.ForeignKey(
