@@ -7,7 +7,8 @@ from airports_management_system.models import (
     Crew,
     AirplaneType,
     Airplane,
-    Airport
+    Airport,
+    Route
 )
 from airports_management_system.serializers import (
     CountrySerializer,
@@ -20,6 +21,8 @@ from airports_management_system.serializers import (
     AirplaneListSerializer,
     AirportSerializer,
     AirportListSerializer,
+    RouteSerializer,
+    RouteListSerializer
 )
 
 
@@ -102,3 +105,21 @@ class AirportViewSet(
             return AirportListSerializer
 
         return AirportSerializer
+
+
+class RouteViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    viewsets.GenericViewSet
+):
+    queryset = Route.objects.select_related(
+        "source__closest_big_city__country",
+        "destination__closest_big_city__country"
+    )
+    serializer_class = RouteSerializer
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return RouteListSerializer
+
+        return RouteSerializer
