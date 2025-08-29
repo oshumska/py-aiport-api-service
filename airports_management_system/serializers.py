@@ -230,7 +230,7 @@ class TicketSeatSerializer(TicketSerializer):
 class FlightDetailSerializer(FlightSerializer):
     route = RouteListSerializer(many=False, read_only=True)
     airplane = AirplaneListSerializer(many=False, read_only=True)
-    crew_members = CrewListSerializer(many=True, read_only=True)
+    crew_members = CrewDetailSerializer(many=True, read_only=True)
     tickets_taken = TicketSeatSerializer(
         source="tickets",
         many=True,
@@ -242,11 +242,11 @@ class FlightDetailSerializer(FlightSerializer):
         fields = (
             "id",
             "route",
-            "airplane",
             "departure_time",
             "arrival_time",
+            "airplane",
+            "tickets_taken",
             "crew_members",
-            "tickets_taken"
         )
 
 
