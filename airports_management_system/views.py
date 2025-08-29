@@ -83,6 +83,16 @@ class CrewViewSet(
 
         return CrewSerializer
 
+    def get_queryset(self):
+        position_id_str = self.request.query_params.get("position")
+
+        queryset = self.queryset
+
+        if position_id_str:
+            queryset = queryset.filter(position=int(position_id_str))
+
+        return queryset
+
 
 class AirplaneTypeViewSet(
     mixins.ListModelMixin,
