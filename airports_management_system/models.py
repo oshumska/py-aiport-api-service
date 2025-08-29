@@ -84,6 +84,9 @@ class Airplane(models.Model):
     def capacity(self):
         return self.rows * self.seats_in_row
 
+    def __str__(self):
+        return self.name
+
 
 class Airport(models.Model):
     name = models.CharField(max_length=255)
