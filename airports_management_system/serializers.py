@@ -29,6 +29,10 @@ class CitySerializer(serializers.ModelSerializer):
         fields = ("id", "name", "country")
 
 
+class CityListSerializer(CitySerializer):
+    country = CountrySerializer()
+
+
 class CrewPositionSerializer(serializers.ModelSerializer):
 
     class Meta:

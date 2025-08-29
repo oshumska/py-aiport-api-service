@@ -35,6 +35,7 @@ from airports_management_system.serializers import (
     FlightDetailSerializer,
     OrderSerializer,
     OrderListSerializer,
+    CityListSerializer,
 )
 
 
@@ -66,6 +67,12 @@ class CityViewSet(
             queryset = queryset.filter(country__id=int(country_str_id))
 
         return queryset
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return CityListSerializer
+
+        return CitySerializer
 
 
 class CrewPositionViewSet(
