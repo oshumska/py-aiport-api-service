@@ -116,11 +116,20 @@ class Route(models.Model):
                 f"-> {self.destination.name}"
                 f"({destination_country})")
 
+    @staticmethod
+    def validate_route(source, destination, distance, error_to_raise):
+        if source == destination:
+            raise error_to_raise("Source and destination must be different")
+        if distance == 0:
+            error_to_raise("Distance cannot be 0")
+
     def clean(self):
-        if self.source == self.destination:
-            raise ValidationError("Source and destination must be different")
-        elif self.distance == 0:
-            raise ValidationError("Distance cannot be 0")
+        Route.validate_route(
+            self.source,
+            self.destination,
+            self.distance,
+            ValidationError
+        )
 
     def save(
             self,
