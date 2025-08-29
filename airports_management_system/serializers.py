@@ -177,7 +177,7 @@ class FlightSerializer(serializers.ModelSerializer):
 
 
 class FlightListSerializer(FlightSerializer):
-    route = serializers.CharField(source="route.route_name", read_only=True)
+    route = serializers.CharField(source="route.__str__", read_only=True)
     airplane = serializers.CharField(source="airplane.name", read_only=True)
     airplane_capacity = serializers.CharField(
         source="airplane.capacity",

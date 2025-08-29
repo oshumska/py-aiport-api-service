@@ -111,15 +111,6 @@ class Route(models.Model):
     )
     distance = models.IntegerField()
 
-    @property
-    def route_name(self):
-        source_country = self.source.closest_big_city.country.name
-        destination_country = self.destination.closest_big_city.country.name
-        return (f"{self.source.name}"
-                f"({source_country}) "
-                f"-> {self.destination.name}"
-                f"({destination_country})")
-
     @staticmethod
     def validate_route(source, destination, distance, error_to_raise):
         if distance <= 0:
