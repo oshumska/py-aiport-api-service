@@ -152,6 +152,26 @@ class AirportViewSet(
 
         return AirportSerializer
 
+    def get_queryset(self):
+        name = self.request.query_params.get("name")
+        country_str_id = self.request.query_params.get("country")
+        city_str_id = self.request.query_params.get("city")
+
+        queryset = self.queryset
+
+        if name:
+            queryset = queryset.filter(name__icontains=name)
+
+        if country_str_id:
+            queryset = queryset.filter(
+                closest_big_city__country=int(country_str_id)
+            )
+
+        if city_str_id:
+            queryset = queryset.filter(closest_big_city=int(city_str_id))
+
+        return queryset
+
 
 class RouteViewSet(
     mixins.ListModelMixin,
