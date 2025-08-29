@@ -104,6 +104,17 @@ class AirportListSerializer(serializers.ModelSerializer):
 
 
 class RouteSerializer(serializers.ModelSerializer):
+    airport_queryset = Airport.objects.select_related(
+        "closest_big_city__country"
+    )
+    source = serializers.PrimaryKeyRelatedField(
+        many=False,
+        queryset=airport_queryset
+    )
+    destination = serializers.PrimaryKeyRelatedField(
+        many=False,
+        queryset=airport_queryset
+    )
 
     def validate(self, attrs):
         data = super(RouteSerializer, self).validate(attrs=attrs)
