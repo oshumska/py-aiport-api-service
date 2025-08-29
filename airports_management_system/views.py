@@ -1,6 +1,10 @@
 from rest_framework import viewsets, mixins
 from django.db.models import F, Count
+from rest_framework.permissions import IsAuthenticated
 
+from airports_management_system.permissions import (
+    IsAdminOrIfAuthenticatedReadOnly
+)
 from airports_management_system.models import (
     Country,
     City,
@@ -41,6 +45,7 @@ class CountryViewSet(
 ):
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly, )
 
 
 class CityViewSet(
@@ -50,6 +55,7 @@ class CityViewSet(
 ):
     queryset = City.objects.select_related("country")
     serializer_class = CitySerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class CrewPositionViewSet(
@@ -59,6 +65,7 @@ class CrewPositionViewSet(
 ):
     queryset = CrewPosition.objects.all()
     serializer_class = CrewPositionSerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class CrewViewSet(
@@ -68,6 +75,7 @@ class CrewViewSet(
 ):
     queryset = Crew.objects.select_related("position")
     serializer_class = CrewSerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -83,6 +91,7 @@ class AirplaneTypeViewSet(
 ):
     queryset = AirplaneType.objects.all()
     serializer_class = AirplaneTypeSerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class AirplaneViewSet(
@@ -92,6 +101,7 @@ class AirplaneViewSet(
 ):
     queryset = Airplane.objects.select_related("airplane_type")
     serializer_class = AirplaneSerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -107,6 +117,7 @@ class AirportViewSet(
 ):
     queryset = Airport.objects.select_related("closest_big_city__country")
     serializer_class = AirportSerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -125,6 +136,7 @@ class RouteViewSet(
         "destination__closest_big_city__country"
     )
     serializer_class = RouteSerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -150,6 +162,7 @@ class FlightViewSet(viewsets.ModelViewSet):
         )
     )
     serializer_class = FlightSerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -169,6 +182,7 @@ class OrderViewSet(
         "tickets__flight",
     )
     serializer_class = OrderSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_serializer_class(self):
         if self.action == "list":
