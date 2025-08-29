@@ -57,6 +57,16 @@ class CityViewSet(
     serializer_class = CitySerializer
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
+    def get_queryset(self):
+        country_str_id = self.request.query_params.get("country")
+
+        queryset = self.queryset
+
+        if country_str_id:
+            queryset = queryset.filter(country__id=int(country_str_id))
+
+        return queryset
+
 
 class CrewPositionViewSet(
     mixins.ListModelMixin,
