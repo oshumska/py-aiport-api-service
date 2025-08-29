@@ -1,4 +1,5 @@
 from rest_framework import viewsets, mixins
+from django.db.models import F, Count
 
 from airports_management_system.models import (
     Country,
@@ -8,7 +9,8 @@ from airports_management_system.models import (
     AirplaneType,
     Airplane,
     Airport,
-    Route
+    Route,
+    Flight,
 )
 from airports_management_system.serializers import (
     CountrySerializer,
@@ -22,7 +24,10 @@ from airports_management_system.serializers import (
     AirportSerializer,
     AirportListSerializer,
     RouteSerializer,
-    RouteListSerializer
+    RouteListSerializer,
+    FlightSerializer,
+    FlightListSerializer,
+    FlightDetailSerializer,
 )
 
 
@@ -123,3 +128,30 @@ class RouteViewSet(
             return RouteListSerializer
 
         return RouteSerializer
+
+
+class FlightViewSet(viewsets.ModelViewSet):
+    queryset = (
+        Flight.objects
+        .select_related(
+            "route__source__closest_big_city__country",
+            "airplane__airplane_type",
+            "route__destination__closest_big_city__country"
+        )
+        .prefetch_related("crew_members__position")
+        .annotate(
+            tickets_available=(
+                F("airplane__seats_in_row") * F("airplane__rows")
+                - Count("tickets")
+            )
+        )
+    )
+    serializer_class = FlightSerializer
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return FlightListSerializer
+        elif self.action == "retrieve":
+            return FlightDetailSerializer
+
+        return FlightSerializer
