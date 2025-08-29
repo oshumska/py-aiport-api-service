@@ -140,9 +140,13 @@ class Route(models.Model):
         )
 
     def __str__(self):
-        return (f"{self.source.closest_big_city.name} "
+        source_country = self.source.closest_big_city.country.name
+        destination_country = self.destination.closest_big_city.country.name
+        return (f"{self.source.closest_big_city.name}"
+                f"({source_country})"
                 f"-> "
-                f"{self.destination.closest_big_city.name}")
+                f"{self.destination.closest_big_city.name}"
+                f"({destination_country})")
 
 
 class Flight(models.Model):
@@ -162,7 +166,9 @@ class Flight(models.Model):
 
     @staticmethod
     def validate_flight(arrival_time, departure_time, error_to_raise):
-        if not (departure_time and arrival_time and departure_time < arrival_time):
+        if not (departure_time
+                and arrival_time
+                and departure_time < arrival_time):
             raise error_to_raise(
                 "Departure time must be earlier than arrival time"
             )
