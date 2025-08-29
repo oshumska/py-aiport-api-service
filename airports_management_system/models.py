@@ -169,13 +169,19 @@ class Flight(models.Model):
     arrival_time = models.DateTimeField()
     crew_members = models.ManyToManyField(Crew, blank=True)
 
-    def clean(self):
-        if not (self.departure_time
-                and self.arrival_time
-                and self.departure_time <= self.arrival_time):
-            raise ValidationError(
+    @staticmethod
+    def validate_flight(arrival_time, departure_time, error_to_raise):
+        if not (departure_time and arrival_time and departure_time < arrival_time):
+            raise error_to_raise(
                 "Departure time must be earlier than arrival time"
             )
+
+    def clean(self):
+        Flight.validate_flight(
+            self.arrival_time,
+            self.departure_time,
+            ValidationError
+        )
 
     def save(
             self,
