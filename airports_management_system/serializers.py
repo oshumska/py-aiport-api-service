@@ -139,6 +139,16 @@ class RouteListSerializer(RouteSerializer):
 
 class FlightSerializer(serializers.ModelSerializer):
 
+    def validate(self, attrs):
+        data = super(FlightSerializer, self).validate(attrs=attrs)
+        Flight.validate_flight(
+            attrs["arrival_time"],
+            attrs["departure_time"],
+            ValidationError
+        )
+
+        return data
+
     class Meta:
         model = Flight
         fields = (
