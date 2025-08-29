@@ -11,6 +11,7 @@ from airports_management_system.views import (
     AirportViewSet,
     RouteViewSet,
     FlightViewSet,
+    OrderViewSet,
 )
 
 app_name = "airports-manager"
@@ -25,6 +26,7 @@ router.register("airplanes", AirplaneViewSet)
 router.register("airports", AirportViewSet)
 router.register("routes", RouteViewSet)
 router.register("flights", FlightViewSet)
+router.register("orders", OrderViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),

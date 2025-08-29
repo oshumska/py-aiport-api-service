@@ -11,6 +11,7 @@ from airports_management_system.models import (
     Airport,
     Route,
     Flight,
+    Order,
 )
 from airports_management_system.serializers import (
     CountrySerializer,
@@ -28,6 +29,8 @@ from airports_management_system.serializers import (
     FlightSerializer,
     FlightListSerializer,
     FlightDetailSerializer,
+    OrderSerializer,
+    OrderListSerializer,
 )
 
 
@@ -155,3 +158,26 @@ class FlightViewSet(viewsets.ModelViewSet):
             return FlightDetailSerializer
 
         return FlightSerializer
+
+
+class OrderViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    viewsets.GenericViewSet
+):
+    queryset = Order.objects.prefetch_related(
+        "tickets__flight",
+    )
+    serializer_class = OrderSerializer
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return OrderListSerializer
+
+        return OrderSerializer
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
