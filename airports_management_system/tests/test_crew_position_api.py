@@ -9,6 +9,7 @@ from airports_management_system.serializers import CrewPositionSerializer
 
 CREW_POSITION_URL = reverse("airports-manager:crewposition-list")
 
+
 def sample_position(**params):
     defaults = {
         "name": "Flight attendant"
@@ -63,3 +64,48 @@ class AuthenticatedCrewPositionApiTests(TestCase):
         res = self.client.post(CREW_POSITION_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class AdminCrewPositionApiTests(TestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = get_user_model().objects.create_user(
+            username="admin",
+            email="admin@test.com",
+            password="<PASSWORD>",
+            is_staff=True
+        )
+        self.client.force_authenticate(self.user)
+
+    def test_create_crew_position(self):
+        payload = {
+            "name": "Test position"
+        }
+
+        res = self.client.post(CREW_POSITION_URL, payload)
+
+        position = CrewPosition.objects.get(id=res.data["id"])
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+        self.assertEqual(position.name, payload["name"])
+
+    def test_retrieve_crew_position(self):
+        sample_position()
+
+        res = self.client.get(f"{CREW_POSITION_URL}1/")
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_crew_position(self):
+        sample_position()
+
+        res = self.client.put(f"{CREW_POSITION_URL}1/", {"name": "<NAME>"})
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_crew_position_not_allowed(self):
+        sample_position()
+
+        res = self.client.delete(f"{CREW_POSITION_URL}1/")
+
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
