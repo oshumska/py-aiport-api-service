@@ -131,6 +131,19 @@ class CrewViewSet(
 
         return queryset
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "position",
+                type=OpenApiTypes.INT,
+                description="Filter by CrewPosition id (ex. ?position=1)"
+            )
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        """Get list of Crews"""
+        return super().list(request, *args, **kwargs)
+
 
 class AirplaneTypeViewSet(
     mixins.ListModelMixin,
