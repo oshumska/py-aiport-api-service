@@ -313,6 +313,35 @@ class RouteViewSet(
 
         return queryset
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "source",
+                type=OpenApiTypes.INT,
+                description="Filter by source airport (ex. ?source=1)"
+            ),
+            OpenApiParameter(
+                "destination",
+                type=OpenApiTypes.INT,
+                description="Filter by destination airport "
+                            "(ex. ?destination=1)"
+            ),
+            OpenApiParameter(
+                "from_country",
+                type=OpenApiTypes.INT,
+                description="Filter by source country (ex. ?from_country=1)"
+            ),
+            OpenApiParameter(
+                "to_country",
+                type=OpenApiTypes.INT,
+                description="Filter by destination country (ex. ?to_country=1)"
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        """Gets list of Routes"""
+        return super().list(request, *args, **kwargs)
+
 
 class FlightViewSet(viewsets.ModelViewSet):
     queryset = (
