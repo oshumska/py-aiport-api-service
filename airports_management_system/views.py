@@ -167,6 +167,8 @@ class AirplaneTypeViewSet(
         url_path="upload-image",
     )
     def upload_image(self, request, pk=None):
+        """upload airplane image if no image is installed
+                or if image change needed"""
         airplane_type = self.get_object()
         serializer = self.get_serializer(airplane_type, data=request.data)
         if serializer.is_valid():
@@ -235,6 +237,8 @@ class AirportViewSet(
         url_path="upload-image",
     )
     def upload_image(self, request, pk=None):
+        """upload airport image if no image is installed
+        or if image change needed"""
         airport = self.get_object()
         serializer = self.get_serializer(airport, data=request.data)
         if serializer.is_valid():
