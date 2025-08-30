@@ -41,6 +41,7 @@ from airports_management_system.serializers import (
     OrderListSerializer,
     CityListSerializer,
     AirplaneTypeImageSerializer,
+    AirportImageSerializer,
 )
 
 
@@ -175,6 +176,8 @@ class AirportViewSet(
     def get_serializer_class(self):
         if self.action == "list":
             return AirportListSerializer
+        elif self.action == "upload_image":
+            return AirportImageSerializer
 
         return AirportSerializer
 
@@ -197,6 +200,20 @@ class AirportViewSet(
             queryset = queryset.filter(closest_big_city=int(city_str_id))
 
         return queryset
+
+    @action(
+        methods=["POST"],
+        detail=True,
+        url_path="upload-image",
+    )
+    def upload_image(self, request, pk=None):
+        airport = self.get_object()
+        serializer = self.get_serializer(airport, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class RouteViewSet(
