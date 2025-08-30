@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, mixins, status
 from django.db.models import F, Count
 from rest_framework.decorators import action
@@ -79,6 +81,19 @@ class CityViewSet(
             return CityListSerializer
 
         return CitySerializer
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "country",
+                type=OpenApiTypes.INT,
+                description="Filter by country id (ex. ?country=1)"
+            )
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        """Get list of cities"""
+        return super().list(request, *args, **kwargs)
 
 
 class CrewPositionViewSet(
