@@ -390,6 +390,31 @@ class FlightViewSet(viewsets.ModelViewSet):
 
         return FlightSerializer
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "route",
+                type=OpenApiTypes.INT,
+                description="Filter by route (ex. ?route=1)"
+            ),
+            OpenApiParameter(
+                "departure_date",
+                type=OpenApiTypes.DATE,
+                description="Filter by departure date "
+                            "(ex. ?departure_date=2025-10-10)"
+            ),
+            OpenApiParameter(
+                "arrival_date",
+                type=OpenApiTypes.DATE,
+                description="Filter by arrival date "
+                            "(ex. ?arrival_date=2025-10-10)"
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        """Gets list of Flights"""
+        return super().list(request, *args, **kwargs)
+
 
 class OrderViewSet(
     mixins.ListModelMixin,
