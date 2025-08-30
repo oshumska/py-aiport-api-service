@@ -68,6 +68,8 @@ def upload_image_path(
         instance: Union["AirplaneType", "Airport"],
         filename: str
 ) -> pathlib.Path:
+    """function make unique names to uploaded images
+    and saves in folder according to their type"""
     filename = (
             f"{slugify(instance.name)}-{uuid.uuid4()}.{filename}"
             + pathlib.Path(filename).suffix
