@@ -98,7 +98,7 @@ class AirportSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Airport
-        fields = ("id", "name", "closest_big_city")
+        fields = ("id", "name", "closest_big_city", "image")
 
 
 class AirportListSerializer(serializers.ModelSerializer):
@@ -111,7 +111,14 @@ class AirportListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Airport
-        fields = ("id", "name", "closest_big_city", "country")
+        fields = ("id", "name", "closest_big_city", "country", "image")
+
+
+class AirportImageSerializer(AirportSerializer):
+
+    class Meta:
+        model = Airport
+        fields = ("id", "image")
 
 
 class RouteSerializer(serializers.ModelSerializer):
