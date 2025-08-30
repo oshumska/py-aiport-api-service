@@ -4,3 +4,4 @@ djangorestframework
 django-debug-toolbar
 djangorestframework-simplejwt
 Pillow
+drf-spectacular
