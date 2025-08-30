@@ -88,6 +88,14 @@ class AirplaneListSerializer(AirplaneSerializer):
         source="airplane_type.name",
         read_only=True
     )
+    airplane_image = serializers.ImageField(
+        source="airplane_type.image",
+        read_only=True
+    )
+
+    class Meta:
+        model = Airplane
+        fields = ("id", "name", "rows", "seats_in_row", "airplane_type", "airplane_image")
 
 
 class AirportSerializer(serializers.ModelSerializer):
