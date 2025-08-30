@@ -3,3 +3,4 @@ Django~=5.2.5
 djangorestframework
 django-debug-toolbar
 djangorestframework-simplejwt
+Pillow
