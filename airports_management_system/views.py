@@ -243,6 +243,29 @@ class AirportViewSet(
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "name",
+                type=OpenApiTypes.STR,
+                description="Filter by airport name (ex. ?name=Chopin)"
+            ),
+            OpenApiParameter(
+                "country",
+                type=OpenApiTypes.INT,
+                description="Filter airports of country (ex. ?country=1)"
+            ),
+            OpenApiParameter(
+                "city",
+                type=OpenApiTypes.INT,
+                description="Filter airports in city (ex. ?city=1)"
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        """Gets list of Airports"""
+        return super().list(request, *args, **kwargs)
+
 
 class RouteViewSet(
     mixins.ListModelMixin,
