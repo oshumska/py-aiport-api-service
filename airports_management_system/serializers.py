@@ -209,6 +209,10 @@ class FlightListSerializer(FlightSerializer):
         source="airplane.capacity",
         read_only=True
     )
+    airplane_image = serializers.ImageField(
+        source="airplane.airplane_type.image",
+        read_only=True
+    )
     tickets_available = serializers.IntegerField(read_only=True)
 
     class Meta:
@@ -218,6 +222,7 @@ class FlightListSerializer(FlightSerializer):
             "route",
             "airplane",
             "airplane_capacity",
+            "airplane_image",
             "departure_time",
             "arrival_time",
             "tickets_available"
