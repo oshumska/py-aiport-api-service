@@ -1,6 +1,11 @@
+import pathlib
+import uuid
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils.text import slugify
+from typing import Union
 
 
 class Country(models.Model):
@@ -59,8 +64,27 @@ class Crew(models.Model):
         return f"{self.first_name} {self.last_name}: {self.position.name}"
 
 
+def upload_image_path(
+        instance: Union["AirplaneType", "Airport"],
+        filename: str
+) -> pathlib.Path:
+    filename = (
+            f"{slugify(instance.name)}-{uuid.uuid4()}.{filename}"
+            + pathlib.Path(filename).suffix
+    )
+    return (
+            pathlib.Path(f"upload/{type(instance).__name__}/")
+            / pathlib.Path(filename)
+    )
+
+
 class AirplaneType(models.Model):
     name = models.CharField(max_length=255)
+    image = models.ImageField(
+        null=True,
+        blank=True,
+        upload_to=upload_image_path
+    )
 
     class Meta:
         verbose_name = "airplane type"
@@ -94,6 +118,11 @@ class Airport(models.Model):
         City,
         on_delete=models.CASCADE,
         related_name="airports"
+    )
+    image = models.ImageField(
+        null=True,
+        blank=True,
+        upload_to=upload_image_path
     )
 
     def __str__(self):
