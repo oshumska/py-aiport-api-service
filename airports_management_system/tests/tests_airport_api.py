@@ -112,3 +112,50 @@ class AuthenticatedAirportApiTests(TestCase):
 
         res = self.client.post(AIRPORT_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class AdminUserAirportApiTests(TestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = get_user_model().objects.create_user(
+            username="test",
+            email="test@test.com",
+            password="<PASSWORD>",
+            is_staff=True,
+        )
+        self.client.force_authenticate(self.user)
+        self.country = Country.objects.create(name="Italy")
+        self.city = City.objects.create(name="Rome", country=self.country)
+        self.airport = Airport.objects.create(
+            name="test airport",
+            closest_big_city=self.city,
+        )
+
+    def test_create_airport(self):
+        payload = {
+            "name": "Rome airport",
+            "closest_big_city": self.city.id,
+        }
+
+        res = self.client.post(AIRPORT_URL, payload)
+        airport = Airport.objects.get(id=res.data["id"])
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(airport.name, "Rome airport")
+        self.assertEqual(airport.closest_big_city.id, self.city.id)
+
+    def test_retrieve_airport(self):
+
+        res = self.client.get(f"{AIRPORT_URL}1/")
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_airport(self):
+
+        res = self.client.put(f"{AIRPORT_URL}1/", {"name": "new name"})
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_airport(self):
+
+        res = self.client.delete(f"{AIRPORT_URL}1/")
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
