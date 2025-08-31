@@ -81,3 +81,49 @@ class AuthenticatedCityApiTests(TestCase):
 
         res = self.client.post(CITY_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class AdminUserCityAPITest(TestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = get_user_model().objects.create_user(
+            username="test",
+            email="test@test.com",
+            password="<PASSWORD>",
+            is_staff=True,
+        )
+        self.client.force_authenticate(self.user)
+
+        self.country_1 = Country.objects.create(name="test 1")
+
+    def test_create_city(self):
+        payload = {
+            "country": self.country_1.id,
+            "name": "test create"
+        }
+
+        res = self.client.post(CITY_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+    def test_retrieve_city(self):
+        City.objects.create(country=self.country_1, name="test city")
+
+        res = self.client.get(f"{CITY_URL}1/")
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_city(self):
+        City.objects.create(country=self.country_1, name="test city")
+        payload = {
+            "country": self.country_1.id,
+            "name": "Paris"
+        }
+
+        res = self.client.put(f"{CITY_URL}1/", payload)
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_city(self):
+        City.objects.create(country=self.country_1, name="test city")
+
+        res = self.client.delete(f"{CITY_URL}1/")
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
