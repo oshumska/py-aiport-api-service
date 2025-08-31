@@ -9,6 +9,7 @@ from airports_management_system.serializers import CountrySerializer
 
 COUNTRY_URL = reverse("airports-manager:country-list")
 
+
 def sample_country(**params):
     defaults = {
         "name": "Italy",
@@ -42,7 +43,6 @@ class AuthenticatedCountryApiTests(TestCase):
         )
         self.client.force_authenticate(self.user)
 
-
     def test_get_country_list(self):
         """tests that authenticated user have
                access to list of countries"""
@@ -65,3 +65,47 @@ class AuthenticatedCountryApiTests(TestCase):
         res = self.client.post(COUNTRY_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class AdminUserCountryAPITests(TestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = get_user_model().objects.create_user(
+            username="test",
+            email="test@test.com",
+            password="<PASSWORD>",
+            is_staff=True,
+        )
+        self.client.force_authenticate(self.user)
+
+    def test_create_country(self):
+        """tests that admin can create countries"""
+        payload = {
+            "name": "France",
+        }
+
+        res = self.client.post(COUNTRY_URL, payload)
+        country = Country.objects.get(id=res.data["id"])
+
+        self.assertEqual(country.name, payload["name"])
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+    def test_retrieve_country(self):
+        sample_country()
+
+        res = self.client.get(f"{COUNTRY_URL}1/")
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_country(self):
+        sample_country()
+
+        res = self.client.put(f"{COUNTRY_URL}1/", {"name": "test name"})
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_country(self):
+        sample_country()
+
+        res = self.client.delete(f"{COUNTRY_URL}1/")
+
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
