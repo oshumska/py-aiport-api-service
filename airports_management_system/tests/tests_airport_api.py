@@ -28,6 +28,7 @@ class UnauthenticatedAirportApiTests(TestCase):
 
 
 class AuthenticatedAirportApiTests(TestCase):
+
     def setUp(self):
         self.client = APIClient()
         self.user = get_user_model().objects.create_user(
@@ -101,3 +102,13 @@ class AuthenticatedAirportApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertIn(self.serializer_1.data, res.data["results"])
         self.assertNotIn(self.serializer_2.data, res.data["results"])
+
+    def test_create_airport_forbidden(self):
+        """tests that not staff can't create new airport"""
+        payload = {
+            "name": "new airport",
+            "closest_big_city": self.city.id,
+        }
+
+        res = self.client.post(AIRPORT_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
