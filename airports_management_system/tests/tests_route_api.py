@@ -94,3 +94,104 @@ class AuthenticatedRouteApiTests(TestCase):
 
         res = self.client.post(ROUTE_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class AdminUserRouteAPITests(TestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = get_user_model().objects.create_user(
+            username="test",
+            email="test@test.com",
+            password="<PASSWORD>",
+            is_staff=True,
+        )
+        self.client.force_authenticate(self.user)
+        self.country = Country.objects.create(name="source")
+        self.country_2 = Country.objects.create(name="destination")
+        self.city = City.objects.create(country=self.country, name="source")
+        self.city_2 = City.objects.create(
+            country=self.country_2,
+            name="destination"
+        )
+        self.airport = Airport.objects.create(
+            closest_big_city=self.city,
+            name="source"
+        )
+        self.airport_2 = Airport.objects.create(
+            closest_big_city=self.city_2,
+            name="destination"
+        )
+
+    def test_create_route(self):
+        payload = {
+            "source": self.airport.id,
+            "destination": self.airport_2.id,
+            "distance": 100,
+        }
+
+        res = self.client.post(ROUTE_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+    def test_create_route_source_equal_destination(self):
+        """tests that impossible create route
+        with same source and destination"""
+        payload = {
+            "source": self.airport.id,
+            "destination": self.airport.id,
+            "distance": 100,
+        }
+
+        res = self.client.post(ROUTE_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_distance_equal_zero(self):
+        """tests that impossible create route with distance=0"""
+        payload = {
+            "source": self.airport.id,
+            "destination": self.airport_2.id,
+            "distance": 0,
+        }
+
+        res = self.client.post(ROUTE_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_distance_less_zero(self):
+        """tests that impossible create route with distance<0"""
+        payload = {
+            "source": self.airport.id,
+            "destination": self.airport_2.id,
+            "distance": -100,
+        }
+
+        res = self.client.post(ROUTE_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_retrieve_route(self):
+        """tests that detail route doesn't exist"""
+        Route.objects.create(
+            source=self.airport,
+            destination=self.airport_2,
+            distance=100
+        )
+        res = self.client.get(f"{ROUTE_URL}1/")
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_route(self):
+        Route.objects.create(
+            source=self.airport,
+            destination=self.airport_2,
+            distance=100
+        )
+        res = self.client.put(f"{ROUTE_URL}1/", {"distance": 200})
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_route(self):
+        Route.objects.create(
+            source=self.airport,
+            destination=self.airport_2,
+            distance=100
+        )
+
+        res = self.client.delete(f"{ROUTE_URL}1/")
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
