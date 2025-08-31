@@ -62,3 +62,70 @@ class AuthenticatedAirplaneApiTests(TestCase):
 
         res = self.client.post(AIRPLANE_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class AdminUserAirplaneAPITest(TestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = get_user_model().objects.create_user(
+            username="test",
+            email="test@test.com",
+            password="<PASSWORD>",
+            is_staff=True,
+        )
+        self.client.force_authenticate(self.user)
+
+        self.airplane_type = AirplaneType.objects.create(name="type 1")
+
+    def test_create_airplane(self):
+        payload = {
+            "name": "Airplane",
+            "rows": 20,
+            "seats_in_row": 6,
+            "airplane_type": self.airplane_type.id,
+        }
+
+        res = self.client.post(AIRPLANE_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+        airplane = Airplane.objects.get(id=res.data["id"])
+        airplane_type = payload.pop("airplane_type")
+        self.assertEqual(airplane.airplane_type.id, airplane_type)
+        for key in payload:
+            self.assertEqual(payload[key], getattr(airplane, key))
+
+    def test_retrieve_airplane(self):
+        Airplane.objects.create(
+            name="Airplane",
+            rows=20,
+            seats_in_row=6,
+            airplane_type=self.airplane_type,
+        )
+
+        res = self.client.get(f"{AIRPLANE_URL}1/")
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_airplane(self):
+        Airplane.objects.create(
+            name="Airplane",
+            rows=20,
+            seats_in_row=6,
+            airplane_type=self.airplane_type,
+        )
+
+        res = self.client.put(f"{AIRPLANE_URL}1/", {"name": "Airplane 1"})
+
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_airplane(self):
+        Airplane.objects.create(
+            name="Airplane",
+            rows=20,
+            seats_in_row=6,
+            airplane_type=self.airplane_type,
+        )
+
+        res = self.client.delete(f"{AIRPLANE_URL}1/")
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
