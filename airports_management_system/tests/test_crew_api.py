@@ -73,3 +73,61 @@ class AuthenticatedCrewApiTests(TestCase):
         }
         res = self.client.post(CREW_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class AdminUserCrewApiTest(TestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = get_user_model().objects.create_user(
+            username="test",
+            email="test@test.com",
+            password="<PASSWORD>",
+            is_staff=True,
+        )
+        self.client.force_authenticate(self.user)
+
+    def test_create_crew(self):
+        payload = {
+            "first_name": "John",
+            "last_name": "Doe",
+        }
+        res = self.client.post(CREW_URL, payload)
+        crew = Crew.objects.get(id=res.data["id"])
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+        for key in payload:
+            self.assertEqual(payload[key], getattr(crew, key))
+
+    def test_create_crew_with_position(self):
+        position = CrewPosition.objects.create(name="pilot")
+        payload = {
+            "first_name": "John",
+            "last_name": "Doe",
+            "position": position.id
+        }
+        res = self.client.post(CREW_URL, payload)
+        crew = Crew.objects.get(id=res.data["id"])
+        position_id = crew.position.id
+
+        self.assertEqual(payload["position"], position_id)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+    def test_retrieve_crew(self):
+        sample_crew()
+
+        res = self.client.get(f"{CREW_URL}1/")
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_crew(self):
+        sample_crew()
+
+        res = self.client.put(f"{CREW_URL}1/", {"first_name": "Jim"})
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_crew(self):
+        sample_crew()
+
+        res = self.client.delete(f"{CREW_URL}1/")
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
