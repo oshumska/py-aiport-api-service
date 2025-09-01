@@ -182,9 +182,11 @@ class FlightSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         data = super(FlightSerializer, self).validate(attrs=attrs)
+        arrival_time = attrs.get("arrival_time", getattr(self.instance, "arrival_time", None))
+        departure_time = attrs.get("departure_time", getattr(self.instance, "departure_time", None))
         Flight.validate_flight(
-            attrs["arrival_time"],
-            attrs["departure_time"],
+            arrival_time,
+            departure_time,
             ValidationError
         )
 
