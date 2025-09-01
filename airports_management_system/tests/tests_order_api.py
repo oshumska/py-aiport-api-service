@@ -81,10 +81,10 @@ class UnauthenticatedOrderApiTests(TestCase):
 
 
 class UserOrderApiTests(TestCase):
+
     def setUp(self):
         self.client = APIClient()
         self.user = get_user_model().objects.create_user(
-            username="test",
             email="test@test.com",
             password="<PASSWORD>"
         )
@@ -134,7 +134,6 @@ class UserOrderApiTests(TestCase):
 
     def test_user_see_only_his_orders(self):
         user_2 = get_user_model().objects.create(
-            username="test2",
             email="test2@test.com",
             password="<PASSWORD>"
         )

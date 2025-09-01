@@ -48,7 +48,6 @@ class AuthenticatedAirplaneTypeApiTests(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = get_user_model().objects.create_user(
-            username="test",
             email="test@test.com",
             password="<PASSWORD>"
         )
@@ -77,7 +76,6 @@ class AdminUserAirplaneTypeApiTests(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = get_user_model().objects.create_user(
-            username="test",
             email="test@test.com",
             password="<PASSWORD>",
             is_staff=True,
@@ -125,7 +123,6 @@ class ImageFieldAirplaneTypeApiTests(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = get_user_model().objects.create_user(
-            username="test",
             email="test@test.com",
             password="<PASSWORD>",
             is_staff=True,

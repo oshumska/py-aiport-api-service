@@ -36,7 +36,6 @@ class AuthenticatedCrewPositionApiTests(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = get_user_model().objects.create_user(
-            username="test",
             email="test@test.com",
             password="<PASSWORD>"
         )
@@ -71,7 +70,6 @@ class AdminCrewPositionApiTests(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = get_user_model().objects.create_user(
-            username="admin",
             email="admin@test.com",
             password="<PASSWORD>",
             is_staff=True
