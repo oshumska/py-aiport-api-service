@@ -90,3 +90,44 @@ class PublicUserApiTests(TestCase):
     def test_retrieve_user_unauthorized(self):
         res = self.client.get(USER_ME_URL)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class PrivateUserAPITests(TestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = get_user_model().objects.create_user(
+            email="private@email.com",
+            password="password"
+        )
+        self.client.force_authenticate(self.user)
+
+    def test_retrieve_profile_success(self):
+        res = self.client.get(USER_ME_URL)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            res.data,
+            {
+                "id": self.user.id,
+                "email": self.user.email,
+                "is_staff": self.user.is_staff,
+            }
+        )
+
+    def test_is_staff_not_changes(self):
+        payload = {
+            "is_staff": True,
+        }
+        res = self.client.patch(USER_ME_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(self.user.is_staff, False)
+
+    def test_update_user_information(self):
+        payload = {
+            "email": "new@email.com",
+            "password": "newpassword"
+        }
+        res = self.client.put(USER_ME_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(self.user.email, payload["email"])
+        self.assertTrue(self.user.check_password(payload["password"]))
