@@ -79,14 +79,14 @@ class AuthenticatedFlightApiTests(TestCase):
             name="Airport 2",
             closest_big_city=city_1,
         )
-        route_1 = Route.objects.create(
+        self.route_1 = Route.objects.create(
             source=airport_1,
             destination=airport_2,
             distance=100,
         )
         airplane = sample_airplane()
         self.flight_1 = Flight.objects.create(
-            route=route_1,
+            route=self.route_1,
             airplane=airplane,
             departure_time=datetime.datetime(
                 2025,
@@ -132,11 +132,12 @@ class AuthenticatedFlightApiTests(TestCase):
             self.assertEqual(len(res.data["results"]), 0)
 
     def test_get_list_of_flights_filtered_by_route(self):
-        res = self.client.get(FLIGHT_URL, {"route": 1})
+        res = self.client.get(FLIGHT_URL, {"route": self.route_1.id})
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(res.data["results"]), 1)
 
-        res = self.client.get(FLIGHT_URL, {"route": 2})
+        wrong_route = self.route_1.id + 1
+        res = self.client.get(FLIGHT_URL, {"route": wrong_route})
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(res.data["results"]), 0)
 
